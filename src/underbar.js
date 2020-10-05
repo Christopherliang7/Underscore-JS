@@ -80,16 +80,64 @@
 
   // Return all elements of an array that pass a truth test.
   _.filter = function(collection, test) {
+    // create a result array
+    var result = [];
+    // iterate over the input collection
+    _.each(collection, function(value) { // value = element
+      // if result of calling iterator function on current element is true
+      if (test(value)) {
+        // add current element to result array
+        result.push(value);
+      }
+    });
+    // return result
+    return result;
   };
 
   // Return all elements of an array that don't pass a truth test.
   _.reject = function(collection, test) {
     // TIP: see if you can re-use _.filter() here, without simply
     // copying code in and modifying it
+
+    return _.filter(collection, function(element) {
+      return !test(element);
+    });
   };
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array, isSorted, iterator) {
+    var uniqueSet;
+    var uniqueArray = [];
+    if (isSorted) {
+      uniqueSet = new Set();
+      _.each(array, function(item) {
+        var beforeUniqSize = uniqueSet.size;
+        uniqueSet.add(iterator(item));
+        var afterUniqSize = uniqueSet.size;
+        if (beforeUniqSize !== afterUniqSize) {
+          uniqueArray.push(item);
+        }
+      });
+    } else {
+      uniqueSet = new Set(array);
+      uniqueArray = Array.from(uniqueSet);
+    }
+    return uniqueArray;//
+
+    // let jumble = {};
+    // let unique = [];
+    // iterator = (isSorted && iterator) || _.identity;
+
+    // _.each(array, function(item) {
+    //   var transformed = iterator(item);
+    //   if (jumble[transformed] === undefined) {
+    //     jumble[transformed] = item;
+    //   }
+    // });
+    // _.each(jumble, function(value) {
+    //   unique.push(value);
+    // });
+    // return unique;
   };
 
 
@@ -98,6 +146,19 @@
     // map() is a useful primitive iteration function that works a lot
     // like each(), but in addition to running the operation on all
     // the members, it also maintains an array of results.
+
+    // set result variable
+    // iterate over collection
+    // push iterator-applied elements
+    // return result variable
+
+    let result = [];
+
+    _.each(collection, function(element) {
+      result.push(iterator(element));
+    });
+
+    return result;
   };
 
   /*
@@ -139,6 +200,17 @@
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
   _.reduce = function(collection, iterator, accumulator) {
+    // iterate over the collection
+    _.each(collection, function (value, key) {
+      // assign accumulator to result of invoking iterator on accumulator and current element
+      if (accumulator === undefined && key === 0) {
+        accumulator = value;
+      } else {
+        accumulator = iterator(accumulator, value);
+      }
+    });
+    // return accumulator
+    return accumulator;
   };
 
   // Determine if the array or object contains a given value (using `===`).
