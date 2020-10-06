@@ -106,38 +106,43 @@
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array, isSorted, iterator) {
-    var uniqueSet;
-    var uniqueArray = [];
-    if (isSorted) {
-      uniqueSet = new Set();
+    // var uniqueSet;
+    // var uniqueArray = [];
+    // if (isSorted) {
+    //   uniqueSet = new Set();
+    //   _.each(array, function(item) {
+    //     var beforeUniqSize = uniqueSet.size;
+    //     uniqueSet.add(iterator(item));
+    //     var afterUniqSize = uniqueSet.size;
+    //     if (beforeUniqSize !== afterUniqSize) {
+    //       uniqueArray.push(item);
+    //     }
+    //   });
+    // } else {
+    //   uniqueSet = new Set(array);
+    //   uniqueArray = Array.from(uniqueSet);
+    // }
+    // return uniqueArray;//
+    let result = [];
+    iterator = iterator || _.identity;
+
+    if (isSorted === true) {
+      // [1, 2, 2, 3, 3, 4, 4, 4]
+      return array;
+    } else {
+      // [4, 2, 1, 1, 2, 4, 5, 1]
+      let unique = {};
       _.each(array, function(item) {
-        var beforeUniqSize = uniqueSet.size;
-        uniqueSet.add(iterator(item));
-        var afterUniqSize = uniqueSet.size;
-        if (beforeUniqSize !== afterUniqSize) {
-          uniqueArray.push(item);
+        var transformed = iterator(item);
+        if (unique[transformed] === undefined) {
+          unique[transformed] = item;
         }
       });
-    } else {
-      uniqueSet = new Set(array);
-      uniqueArray = Array.from(uniqueSet);
+      _.each(unique, function(value) {
+        result.push(value);
+      });
     }
-    return uniqueArray;//
-
-    // let jumble = {};
-    // let unique = [];
-    // iterator = (isSorted && iterator) || _.identity;
-
-    // _.each(array, function(item) {
-    //   var transformed = iterator(item);
-    //   if (jumble[transformed] === undefined) {
-    //     jumble[transformed] = item;
-    //   }
-    // });
-    // _.each(jumble, function(value) {
-    //   unique.push(value);
-    // });
-    // return unique;
+    return result;
   };
 
 
@@ -229,12 +234,30 @@
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
+    iterator = iterator || _.identity;
+
+    return _.reduce(collection, function(isTrue, item) {
+      if (isTrue) {
+        return !!iterator(item);
+      } else {
+        return false;
+      }
+    }, true);
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
+    iterator = iterator || _.identity;
+
+    return _.reduce(collection, function(isTrue, item) {
+      if (!isTrue) {
+        return !!iterator(item);
+      } else {
+        return true;
+      }
+    }, false);
   };
 
 
