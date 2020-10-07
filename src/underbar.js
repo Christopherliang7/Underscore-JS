@@ -124,27 +124,20 @@
     // }
     // return uniqueArray;//
     let result = [];
-    iterator = iterator || _.identity;
+    iterator = (isSorted && iterator) || _.identity;
 
-    if (isSorted === true) {
-      // [1, 2, 2, 3, 3, 4, 4, 4]
-      return array;
-    } else {
-      // [4, 2, 1, 1, 2, 4, 5, 1]
-      let unique = {};
-      _.each(array, function(item) {
-        var transformed = iterator(item);
-        if (unique[transformed] === undefined) {
-          unique[transformed] = item;
-        }
-      });
-      _.each(unique, function(value) {
-        result.push(value);
-      });
-    }
+    let unique = {};
+    _.each(array, function(item) {
+      var transformed = iterator(item);
+      if (unique[transformed] === undefined) {
+        unique[transformed] = item;
+      }
+    });
+    _.each(unique, function(value) {
+      result.push(value);
+    });
     return result;
   };
-
 
   // Return the results of applying an iterator to each element.
   _.map = function(collection, iterator) {
@@ -249,15 +242,30 @@
   // provided, provide a default one
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
+    // set isTrue to false
+    var isTrue = false;
+    // check if iterator is present, if not iterator is identity
     iterator = iterator || _.identity;
-
-    return _.reduce(collection, function(isTrue, item) {
-      if (!isTrue) {
-        return !!iterator(item);
-      } else {
-        return true;
+    // iterate over the input collection
+    _.each(collection, function(item) {
+      // if result of calling iterator on current element is ever true
+      if (_.every([item], iterator)) {
+        // set isTrue to true
+        isTrue = true;
       }
-    }, false);
+    });
+    // return isTrue
+    return isTrue;
+
+    ////////////////////////////////////////////////////////
+    // iterator = iterator || _.identity;
+    // return _.reduce(collection, function(isTrue, item) {
+    //   if (!isTrue) {
+    //     return !!iterator(item);
+    //   } else {
+    //     return true;
+    //   }
+    // }, false);
   };
 
 
@@ -280,11 +288,25 @@
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
+    for (let i = 0; i < arguments.length; + i++) {
+      for (var key in arguments[i]) {
+        obj[key] = arguments[i][key];
+      }
+    }
+    return obj;
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+    for (let i = 0; i < arguments.length; i++) {
+      for (let key in arguments[i]) {
+        if (obj[key] === undefined) {
+          obj[key] = arguments[i][key];
+        }
+      }
+    }
+    return obj;
   };
 
 
@@ -328,6 +350,15 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+    let result = {};
+    return function() {
+      let convert = JSON.stringify(arguments);
+      // return result[convert] = result[convert] || func.apply(this, arguments);
+      if (result[convert] === undefined) {
+        result[convert] = func.apply(this, arguments);
+      }
+      return result[convert];
+    };
   };
 
   // Delays a function for the given number of milliseconds, and then calls
@@ -337,6 +368,7 @@
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+
   };
 
 

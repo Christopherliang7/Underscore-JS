@@ -333,14 +333,14 @@
         var numbers = [1, 2, 2, 3, 4, 4];
 
         // {true: 1 false: 2}
-        expect(_.uniq(numbers, false, iterator)).to.eql([1, 2]);
+        expect(_.uniq(numbers, true, iterator)).to.eql([1, 2]);
       });
 
       it('should handle iterators that work with unsorted array', function() {
         var iterator = function(value) { return value === value; };
         var numbers = [10, 0, 5, 1, 6, 10, 2, 1, 2];
 
-        expect(_.uniq(numbers, true, iterator)).to.eql([10, 0, 5, 1, 6, 10, 2, 1, 2]);
+        expect(_.uniq(numbers, false, iterator)).to.eql([ 0, 1, 2, 5, 6, 10 ]);
       });
 
       it('should produce a brand new array instead of modifying the input array', function() {
